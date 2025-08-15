@@ -1,11 +1,12 @@
 {
   "domain": "http_garage_toggle",
-  "name": "HTTP Garage Toggle",
+  "name": "Garagentor (HTTP Toggle)",
   "config_flow": true,
-  "version": "0.1.2",
+  "version": "0.3.1",
   "documentation": "https://github.com/DoWenzl94/http_garage_toggle",
   "issue_tracker": "https://github.com/DoWenzl94/http_garage_toggle/issues",
   "codeowners": ["@DoWenzl94"],
   "iot_class": "local_polling",
-  "requirements": []
+  "requirements": [],
+  "icon": "mdi:garage"
 }

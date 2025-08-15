@@ -18,7 +18,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema(
             {
-                vol.Required("base_url", default="http://192.168.1.208"): str,
+                vol.Required("base_url", default="http://192.168.1.xxx"): str,
                 vol.Optional("toggle_path", default="/?switch=1"): str,
                 vol.Optional("status_path", default="/"): str,
                 vol.Optional("scan_interval", default=35): int,

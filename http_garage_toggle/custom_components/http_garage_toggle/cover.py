@@ -1,1 +1,0 @@
-# cover.py placeholder content

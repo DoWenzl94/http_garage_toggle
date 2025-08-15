@@ -1,0 +1,19 @@
+{
+  "title": "HTTP Garage Toggle",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add Garage Door",
+        "data": {
+          "base_url": "Base URL",
+          "toggle_path": "Toggle path",
+          "status_path": "Status path",
+          "scan_interval": "Scan interval (s)",
+          "verify_ssl": "Verify SSL",
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    }
+  }
+}

@@ -9,10 +9,9 @@
           "toggle_path": "Toggle-Pfad",
           "status_path": "Status-Pfad",
           "scan_interval": "Abfrageintervall (s)",
-          "verify_ssl": "SSL prüfen",
           "username": "Benutzername",
           "password": "Passwort"
-        }
+          }
       }
     }
   }

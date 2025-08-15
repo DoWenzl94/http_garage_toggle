@@ -2,9 +2,9 @@
   "domain": "http_garage_toggle",
   "name": "HTTP Garage Toggle",
   "version": "0.1.0",
-  "documentation": "https://github.com/DEIN_GITHUB_USER/http_garage_toggle",
-  "issue_tracker": "https://github.com/DEIN_GITHUB_USER/http_garage_toggle/issues",
-  "codeowners": ["@DEIN_GITHUB_USER"],
+  "documentation": "https://github.com/DoWenzl94/http_garage_toggle",
+  "issue_tracker": "https://github.com/DoWenzl94/http_garage_toggle/issues",
+  "codeowners": ["@DoWenzl94"],
   "iot_class": "local_polling",
   "requirements": []
 }

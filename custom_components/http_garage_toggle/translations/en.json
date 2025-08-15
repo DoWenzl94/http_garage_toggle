@@ -9,7 +9,6 @@
           "toggle_path": "Toggle path",
           "status_path": "Status path",
           "scan_interval": "Scan interval (s)",
-          "verify_ssl": "Verify SSL",
           "username": "Username",
           "password": "Password"
         }

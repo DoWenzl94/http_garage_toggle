@@ -169,13 +169,52 @@ bool isTargetReachable(const char* ip) {
   return true;
 }
 ```
-Wiring
-	•	Relay output → connect to the two push-button terminals of your garage door opener
-	•	Reed switch (magnetic sensor) → mounted so it closes when the door is fully closed
-	•	Common GND between ESP, relay module, and reed switch
-	•	Power supply: USB or separate 5V power supply
+## Hardware & Wiring (ESP8266)
 
-More info on ESP32 pinout and GPIO specifics: [https://randomnerdtutorials.com/esp32-pinout-reference-gpios/](https://samela.io/blog/2022-01-02.esp32-garage-door-opener.html)
+> This wiring matches the included ESP8266 sketch (NodeMCU / Wemos D1 mini style pins).  
+> Relay is triggered on **D1**, the reed/limit switch is read on **D3**.
+
+### Bill of Materials
+- ESP8266 board (e.g., Wemos D1 mini or NodeMCU)
+- 1× relay module (3.3 V or 5 V, depending on your module and power)
+- 1× reed switch (magnetic door contact) or a limit switch
+- Wires, magnet for the reed contact, power supply
+
+### Connections (ESP8266)
+**Relay module**
+- `IN` → **D1** (ESP8266)  
+  (This pin is driven HIGH for ~300–1000 ms to simulate a button press.)
+- `VCC` → **3.3 V** (or **5 V** if your relay module requires it)
+- `GND` → **GND**
+
+**Reed switch (door closed detection)**
+- One side of the reed → **D3** (ESP8266)
+- Other side of the reed → **GND**
+
+> Your code configures `D3` with an internal pull-up (INPUT_PULLUP).  
+> That means:
+> - **Door fully closed** → reed **closed** → `D3` is **LOW** → status **CLOSED**  
+> - **Door open** → reed **open** → `D3` is **HIGH** → status **OPEN**
+
+**Garage opener terminals**
+- Connect the relay’s **dry contacts** (COM/NO or the two screw terminals on your relay) **in parallel** to the two push-button terminals of your garage door opener.  
+  The relay simply “presses” the existing button momentarily.
+
+**Power**
+- Power the ESP8266 via **USB** or a **5 V** supply (VIN).  
+- Make sure **GND** is common between ESP8266, relay module, and reed switch.
+
+### Mounting tips
+- Fix the **reed switch** on the frame and the **magnet** on the door so that the contact **closes only when the door is fully shut**.
+- Keep relay wiring short and away from noise sources. If your opener uses low-voltage button lines (typical), the relay’s dry contacts are safe to wire in parallel.
+
+### How it works with this firmware
+1. Home Assistant calls `GET http://<esp-ip>/?switch=1`.
+2. The ESP8266 drives **D1 HIGH** briefly to toggle the door (like pressing the wall button).
+3. The status page `GET /` returns text containing `Door Status: OPEN` or `Door Status: CLOSED`.
+4. The integration polls that page and shows the correct cover state.
+
+> **Note:** If you use a different ESP board or pins, adjust the defines in your sketch accordingly and re-check the wiring.
 
 ⸻
 Credits / License

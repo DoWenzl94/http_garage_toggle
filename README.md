@@ -34,11 +34,12 @@ The integration expects:
 ```cpp
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include "secrets.h" // Contains WIFI_SSID, WIFI_PASS, TARGET_IP (see below)
 
 #define RelaisPin D1
 #define ClosePin D3
 
+const char* ssid = "xxxx"; // Your SSID
+const char* password = "xxxxx"; // Your WiFi Password
 const char* doorstatus = "";
 int currentstate;
 int timetoopen = 25; // Time in seconds after which the door is considered closed
@@ -48,6 +49,7 @@ unsigned long pingInterval = 60000; // Ping test interval (60 seconds)
 unsigned long restartInterval = 60000; // Restart check interval (60 seconds)
 unsigned long lastPingTime = 0;
 unsigned long lastRestartTime = 0;
+const char* targetIP = "192.168.1.1"; // Pingable Device, for example your Router
 
 ESP8266WebServer server(80);
 
@@ -59,12 +61,12 @@ void setup()
 
   Serial.begin(115200);
   
-  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
   }
   server.on("/", BuildIndex);
-  server.onNotFound(handleNotFound);
+  server.onNotFound ( handleNotFound );
   InitialDoorStatus();
   server.begin();
 }
@@ -73,16 +75,17 @@ void loop()
 {
   unsigned long currentMillis = millis();
 
-  // Ping target device
+  // Überprüfen, ob das Zielgerät erreichbar ist
   if (currentMillis - lastPingTime >= pingInterval) {
     lastPingTime = currentMillis;
-    if (!isTargetReachable(TARGET_IP)) {
-      Serial.println("Target not reachable! Restarting...");
+    if (!isTargetReachable(targetIP)) {
+      // Führe einen Neustart durch
+      Serial.println("Zielgerät nicht erreichbar! Führe einen Neustart durch...");
       ESP.restart();
     }
   }
 
-  // Reconnect WiFi if disconnected
+  // Überprüfen, ob WiFi-Verbindung verloren ist und versuchen, sie wiederherzustellen
   if ((WiFi.status() != WL_CONNECTED) && (currentMillis - previousMillis >= pingInterval)) {
     Serial.println("Reconnecting to WiFi...");
     WiFi.disconnect();
@@ -92,28 +95,29 @@ void loop()
 
   server.handleClient();
   
-  // Check door status change
+  // Überprüfen, ob sich der Türstatus geändert hat
   int newState = digitalRead(ClosePin);
   if (newState != currentstate) {
     currentstate = newState;
-    if (currentstate == LOW) {
+    if (currentstate == LOW) { // Wenn der Türkontakt geschlossen ist (LOW)
       doorstatus = "CLOSED";
-      switchedtime = currentMillis;
+      switchedtime = currentMillis; // Aktualisiere die Zeit, zu der die Tür geschlossen wurde
     } else {
       doorstatus = "OPEN";
     }
   }
 
-  // Auto-close timeout logic
+  // Überprüfen, ob die Zeit abgelaufen ist, um die Tür als geschlossen zu betrachten
   if (doorstatus == "CLOSED" && currentMillis - switchedtime >= timetoopen * 1000) {
     doorstatus = "CLOSED";
   }
 
-  // Restart check
+  // Überprüfen, ob es Zeit ist, den Neustart-Test durchzuführen
   if (currentMillis - lastRestartTime >= restartInterval) {
     lastRestartTime = currentMillis;
-    if (!isTargetReachable(TARGET_IP)) {
-      Serial.println("Target not reachable! Restarting...");
+    if (!isTargetReachable(targetIP)) {
+      // Führe einen Neustart durch
+      Serial.println("Zielgerät nicht erreichbar! Führe einen Neustart durch...");
       ESP.restart();
     }
   }
@@ -131,10 +135,10 @@ void BuildIndex()
   server.sendHeader("Cache-Control", "no-cache");
   if (server.arg("switch") == "1")
   {
-    if (digitalRead(ClosePin) == HIGH) {
+    if (digitalRead(ClosePin) == HIGH) { // Wenn der Türkontakt geöffnet ist (HIGH)
       doorstatus = "CLOSING";
     }
-    else if (digitalRead(ClosePin) == LOW) {
+    else if (digitalRead(ClosePin) == LOW) { // Wenn der Türkontakt geschlossen ist (LOW)
       doorstatus = "OPENING";
     }
     DoSwitch();
@@ -145,9 +149,9 @@ void BuildIndex()
 void InitialDoorStatus()
 {
   currentstate = digitalRead(ClosePin);
-  if (currentstate == LOW) {
+  if (currentstate == LOW) { // Wenn der Türkontakt geschlossen ist (LOW)
     doorstatus = "CLOSED";
-    switchedtime = millis();
+    switchedtime = millis(); // Aktualisiere die Zeit, zu der die Tür geschlossen wurde
   } else {
     doorstatus = "OPEN";
   }
@@ -168,6 +172,7 @@ bool isTargetReachable(const char* ip) {
   client.stop();
   return true;
 }
+
 ```
 ## Hardware & Wiring (ESP8266)
 

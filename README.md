@@ -1,7 +1,7 @@
 # HTTP Garage Toggle (Home Assistant)
 
 Home Assistant custom integration to control a garage door via **HTTP toggle**:
-- `open/close/stop` all send the same HTTP request (e.g. `GET /?switch=1`)
+- `open/close` all send the same HTTP request (e.g. `GET /?switch=1`)
 - Status is polled from a page containing `Door Status: OPEN|CLOSED`
 - `device_class: garage`, works with HomeKit Bridge
 
